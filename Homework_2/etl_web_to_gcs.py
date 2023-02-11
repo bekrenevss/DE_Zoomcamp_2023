@@ -29,13 +29,13 @@ def write_local(df: pd.DataFrame, color: str, dataset_file: str) -> Path:
     path = Path(f"data/{color}/{dataset_file}.parquet").as_posix()
     path_local = Path(f"C:/Users/bekrenevHome/git/week_2/data/{color}/{dataset_file}.parquet").as_posix()
     df.to_parquet(path_local, compression="gzip")
-    return path
+    return path, path_local
 
 @task()
-def write_gcs(path: Path) -> None:
+def write_gcs(path: Path, path_local: Path) -> None:
     """Upload local parquet file to GCS"""
     gcs_block = GcsBucket.load("zoom-gcs")
-    gcs_block.upload_from_path(from_path=path, to_path=path, timeout=600)
+    gcs_block.upload_from_path(from_path=path_local, to_path=path, timeout=600)
     return
 
 
@@ -50,9 +50,10 @@ def etl_web_to_gcs() -> None:
 
     df = fetch(dataset_url)
     df_clean = clean(df)
-    path = write_local(df_clean, color, dataset_file)
+    path, path_local = write_local(df_clean, color, dataset_file)
     print(path)
-    write_gcs(path)
+    print(path_local)
+    write_gcs(path, path_local)
                
 if __name__ == '__main__':
     etl_web_to_gcs()
