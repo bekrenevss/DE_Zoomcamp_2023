@@ -16,8 +16,8 @@ def fetch(dataset_url: str) -> pd.DataFrame:
 @task(log_prints=True)
 def clean(df = pd.DataFrame) -> pd.DataFrame:
     """Fix dtype issues"""
-    df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'])
-    df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'])
+    df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
+    df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'])
     #print(df.head(2))
     #print(f"columns: {df.dtypes}")
     print(f"rows: {len(df)}")
@@ -43,8 +43,8 @@ def write_gcs(path: Path, path_local: Path) -> None:
 def etl_web_to_gcs() -> None:
     """The main ELT function"""
     color = "green"
-    year = 2020
-    month = 11
+    year = 2019
+    month = 4
     dataset_file = f"{color}_tripdata_{year}-{month:02}"
     dataset_url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{color}/{dataset_file}.csv.gz"
 
